@@ -27,10 +27,8 @@ namespace Game
 
         public Transform target;
 
-        void Start()
-        {
-            Do();
-        }
+        public bool processPosition = true;
+        public bool processRotation = true;
 
         void Reset()
         {
@@ -55,8 +53,11 @@ namespace Game
             {
                 time = Mathf.MoveTowards(time, duration, Time.deltaTime);
 
-                target.position = Vector3.Lerp(startingPosition, destination.position, time / duration);
-                target.rotation = Quaternion.Lerp(startingRotation, destination.rotation, time / duration);
+                if (processPosition)
+                    target.position = Vector3.Lerp(startingPosition, destination.position, time / duration);
+
+                if (processRotation)
+                    target.rotation = Quaternion.Lerp(startingRotation, destination.rotation, time / duration);
 
                 yield return new WaitForEndOfFrame();
             }

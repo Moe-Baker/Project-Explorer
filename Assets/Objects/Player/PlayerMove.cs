@@ -19,8 +19,38 @@ using Random = UnityEngine.Random;
 
 namespace Game
 {
-	public class PlayerMove : MonoBehaviour
-	{
+    public class PlayerMove : MonoBehaviour
+    {
+        public SpeedData speed = new SpeedData(5f);
+        [Serializable]
+        public struct SpeedData
+        {
+            [SerializeField]
+            float value;
+            public float Value { get { return value; } }
+
+            [SerializeField]
+            AnimationCurve distanceMultiplier;
+            public AnimationCurve DistanceMultipler { get { return distanceMultiplier; } }
+
+            public float Evaluate(float distance)
+            {
+                return value * distanceMultiplier.Evaluate(distance);
+            }
+
+            public SpeedData(float value)
+            {
+                this.value = value;
+
+                distanceMultiplier = new AnimationCurve()
+                {
+                    keys = new Keyframe[] { new Keyframe(0f, 0.2f), new Keyframe(2f, 1f) },
+                    postWrapMode = WrapMode.Clamp,
+                    preWrapMode = WrapMode.Clamp
+                };
+            }
+        }
+
         Player player;
 
         public NavMeshAgent NavAgent { get { return player.NavAgent; } }
@@ -33,15 +63,33 @@ namespace Game
             this.player = player;
         }
 
-        void Update()
+        #region Distance
+        void CalculateDistances()
         {
-            Animator.SetFloat("Speed", NavAgent.velocity.magnitude);
+            
         }
+
+        protected Vector3 lastCommandPosition;
+        public Vector3 LastCommandPosition { get { return lastCommandPosition; } }
+
+        protected float totalDistance;
+        public float TotalDistance { get { return totalDistance; } }
+
+        protected float distanceLeft;
+        public float DistanceLeft { get { return distanceLeft; } }
+
+        public float DistanceTraveled { get { return TotalDistance - DistanceLeft; } }
+
+        public float DistanceRate { get { return DistanceTraveled / totalDistance; } }
+        #endregion
 
         public void To(Vector3 target)
         {
             if (Vector3.Distance(target, Destination) <= 0.1 + 0.05f)
                 return;
+
+            lastCommandPosition = player.FeetPosition;
+            totalDistance = distanceLeft = Vector3.Distance(lastCommandPosition, target);
 
             if (IsProcessing)
                 NavAgent.SetDestination(target);
@@ -58,7 +106,11 @@ namespace Game
 
             while (true)
             {
-                if (Vector3.Distance(player.transform.position + Vector3.down * player.Height / 2f, NavAgent.destination) <= NavAgent.stoppingDistance)
+                distanceLeft = Vector3.Distance(player.FeetPosition, Destination);
+
+                NavAgent.speed = speed.Evaluate(DistanceLeft);
+
+                if (DistanceLeft <= NavAgent.stoppingDistance)
                     break;
 
                 yield return new WaitForEndOfFrame();
@@ -76,6 +128,11 @@ namespace Game
                 StopCoroutine(coroutine);
                 coroutine = null;
             }
+        }
+
+        void Update()
+        {
+            Animator.SetFloat("Speed", NavAgent.velocity.magnitude);
         }
     }
 }

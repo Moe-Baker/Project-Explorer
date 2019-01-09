@@ -64,16 +64,16 @@ namespace Game
             player.Navigator.enabled = false;
             player.Move.To(PlayerAnchorPosition);
 
+            var cameraStartPosition = camera.transform.position;
+
             var cameraTargetPosition = destination.Bounds.center;
             cameraTargetPosition.y = camera.transform.position.y;
 
             while (true)
             {
-                camera.transform.position = Vector3.MoveTowards(camera.transform.position, cameraTargetPosition, cameraTransitionSpeed * Time.deltaTime);
+                camera.transform.position = Vector3.Lerp(cameraStartPosition, cameraTargetPosition, player.Move.DistanceRate);
 
-                var distance = Vector3.Distance(camera.transform.position, cameraTargetPosition);
-
-                if (player.Move.IsProcessing || distance > 0f)
+                if (player.Move.IsProcessing)
                     yield return new WaitForEndOfFrame();
                 else
                     break;
@@ -83,7 +83,7 @@ namespace Game
             opposingRegion.enabled = true;
         }
 
-        void OnDrawGizmos()
+        void OnDrawGizmosSelected()
         {
             Gizmos.color = Color.green;
             Gizmos.DrawCube(PlayerAnchorPosition, new Vector3(0.2f, 4f, 0.2f));

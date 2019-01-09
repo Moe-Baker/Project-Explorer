@@ -34,6 +34,8 @@ namespace Game
             this.player = player;
         }
 
+        public event Action<Vector3> OnSelect;
+
         void Update()
         {
             if(Input.GetMouseButton(0))
@@ -43,11 +45,21 @@ namespace Game
 
                 var ray = camera.ScreenPointToRay(screenPoint);
 
-                RaycastHit hit;
+                RaycastHit rayHit;
 
-                if(Physics.Raycast(ray, out hit, Mathf.Infinity, mask, QueryTriggerInteraction.Ignore))
+                if(Physics.Raycast(ray, out rayHit, Mathf.Infinity, mask, QueryTriggerInteraction.Ignore))
                 {
-                    Move.To(hit.point);
+                    NavMeshHit navHit;
+
+                    if(NavMesh.SamplePosition(rayHit.point, out navHit, 4f, NavMesh.AllAreas))
+                    {
+                        Move.To(rayHit.point);
+                        if (OnSelect != null) OnSelect(navHit.position);
+                    }
+                    else
+                    {
+
+                    }
                 }
                 else
                 {

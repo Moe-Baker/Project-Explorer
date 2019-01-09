@@ -22,11 +22,20 @@ namespace Game
     [RequireComponent(typeof(NavMeshAgent))]
     [RequireComponent(typeof(CapsuleCollider))]
     [RequireComponent(typeof(Rigidbody))]
+    [DefaultExecutionOrder(-100)]
     public class Player : MonoBehaviour
 	{
         new public CapsuleCollider collider { get; protected set; }
         public float Height { get { return collider.height; } }
         public float Radius { get { return collider.radius; } }
+
+        public Vector3 FeetPosition
+        {
+            get
+            {
+                return transform.position + Vector3.down * Height / 2f;
+            }
+        }
 
         new public Rigidbody rigidbody { get; protected set; }
 

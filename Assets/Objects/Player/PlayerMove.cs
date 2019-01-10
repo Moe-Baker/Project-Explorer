@@ -21,6 +21,12 @@ namespace Game
 {
     public class PlayerMove : MonoBehaviour
     {
+        Player player;
+        public void Init(Player player)
+        {
+            this.player = player;
+        }
+
         public SpeedData speed = new SpeedData(5f);
         [Serializable]
         public struct SpeedData
@@ -51,36 +57,19 @@ namespace Game
             }
         }
 
-        Player player;
-
         public NavMeshAgent NavAgent { get { return player.NavAgent; } }
         public Vector3 Destination { get { return NavAgent.destination; } }
 
-        public Animator Animator { get { return player.Animator; } }
-
-        public void Init(Player player)
-        {
-            this.player = player;
-        }
+        public Animator Animator { get { return player.Body.Animator; } }
 
         #region Distance
-        void CalculateDistances()
-        {
-            
-        }
+        public float TotalDistance { get; set; }
 
-        protected Vector3 lastCommandPosition;
-        public Vector3 LastCommandPosition { get { return lastCommandPosition; } }
-
-        protected float totalDistance;
-        public float TotalDistance { get { return totalDistance; } }
-
-        protected float distanceLeft;
-        public float DistanceLeft { get { return distanceLeft; } }
+        public float DistanceLeft { get; set; }
 
         public float DistanceTraveled { get { return TotalDistance - DistanceLeft; } }
 
-        public float DistanceRate { get { return DistanceTraveled / totalDistance; } }
+        public float DistanceRate { get { return DistanceTraveled / TotalDistance; } }
         #endregion
 
         public void To(Vector3 target)
@@ -88,8 +77,7 @@ namespace Game
             if (Vector3.Distance(target, Destination) <= 0.1 + 0.05f)
                 return;
 
-            lastCommandPosition = player.FeetPosition;
-            totalDistance = distanceLeft = Vector3.Distance(lastCommandPosition, target);
+            TotalDistance = DistanceLeft = Vector3.Distance(player.GroundPosition, target);
 
             if (IsProcessing)
                 NavAgent.SetDestination(target);
@@ -106,15 +94,17 @@ namespace Game
 
             while (true)
             {
-                distanceLeft = Vector3.Distance(player.FeetPosition, Destination);
+                DistanceLeft = Vector3.Distance(player.GroundPosition, Destination);
 
                 NavAgent.speed = speed.Evaluate(DistanceLeft);
 
-                if (DistanceLeft <= NavAgent.stoppingDistance)
+                if (DistanceLeft <= NavAgent.stoppingDistance + 0.0001f)
                     break;
 
                 yield return new WaitForEndOfFrame();
             }
+
+            DistanceLeft = 0f;
 
             NavAgent.isStopped = true;
             coroutine = null;

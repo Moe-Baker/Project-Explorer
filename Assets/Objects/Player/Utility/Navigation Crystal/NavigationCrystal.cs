@@ -44,7 +44,7 @@ namespace Game
 
         void Update()
         {
-            if (Vector3.Distance(player.FeetPosition, transform.position) < 0.5f || !player.Navigator.enabled)
+            if (Vector3.Distance(player.GroundPosition, transform.position) < 0.5f || !player.Navigator.enabled)
                 gameObject.SetActive(false);
         }
 	}

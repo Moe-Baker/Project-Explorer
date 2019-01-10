@@ -29,7 +29,7 @@ namespace Game
         public float Height { get { return collider.height; } }
         public float Radius { get { return collider.radius; } }
 
-        public Vector3 FeetPosition
+        public Vector3 GroundPosition
         {
             get
             {
@@ -39,9 +39,9 @@ namespace Game
 
         new public Rigidbody rigidbody { get; protected set; }
 
-        public Animator Animator { get; protected set; }
-
         public NavMeshAgent NavAgent { get; protected set; }
+
+        public PlayerBody Body { get; protected set; }
 
         public PlayerMove Move { get; protected set; }
 
@@ -57,9 +57,10 @@ namespace Game
 
             rigidbody = GetComponent<Rigidbody>();
 
-            Animator = GetComponentInChildren<Animator>();
-
             NavAgent = GetComponent<NavMeshAgent>();
+
+            Body = GetComponentInChildren<PlayerBody>();
+            Body.Init(this);
 
             Move = GetComponentInChildren<PlayerMove>();
             Move.Init(this);

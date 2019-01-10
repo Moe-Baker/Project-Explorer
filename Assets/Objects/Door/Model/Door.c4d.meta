@@ -1,41 +1,22 @@
 fileFormatVersion: 2
-guid: 449330ae339716c4e848a84866aac57b
+guid: 727efd311fd602242ad0505325290351
 ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
-    100000: 2m_floor
-    100002: 2m_wall
-    100004: 4m_floor
-    100006: 4m_wall
-    100008: Corner
-    100010: Floors
-    100012: //RootNode
-    100014: Walls
-    400000: 2m_floor
-    400002: 2m_wall
-    400004: 4m_floor
-    400006: 4m_wall
-    400008: Corner
-    400010: Floors
-    400012: //RootNode
-    400014: Walls
+    100000: //RootNode
+    100002: Frame
+    100004: Panel
+    400000: //RootNode
+    400002: Frame
+    400004: Panel
     2100000: walls
-    2100002: Floors
-    2300000: 2m_floor
-    2300002: 2m_wall
-    2300004: 4m_floor
-    2300006: 4m_wall
-    2300008: Corner
-    3300000: 2m_floor
-    3300002: 2m_wall
-    3300004: 4m_floor
-    3300006: 4m_wall
-    3300008: Corner
-    4300000: 2m_wall
-    4300002: 4m_wall
-    4300004: 2m_floor
-    4300006: 4m_floor
-    4300008: Corner
+    2100002: Door
+    2300000: Frame
+    2300002: Panel
+    3300000: Frame
+    3300002: Panel
+    4300000: Frame
+    4300002: Panel
   externalObjects: {}
   materials:
     importMaterials: 1
@@ -67,7 +48,7 @@ ModelImporter:
     isReadable: 1
   meshes:
     lODScreenPercentages: []
-    globalScale: 1
+    globalScale: 0.01
     meshCompression: 0
     addColliders: 0
     useSRGBMaterialColor: 1
@@ -98,7 +79,7 @@ ModelImporter:
     legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
     blendShapeNormalImportMode: 1
     normalSmoothingSource: 0
-  importAnimation: 1
+  importAnimation: 0
   copyAvatar: 0
   humanDescription:
     serializedVersion: 2

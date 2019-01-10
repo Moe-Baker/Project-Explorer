@@ -4,11 +4,16 @@ ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
     100000: //RootNode
+    100002: Mesh
     400000: //RootNode
+    400002: Mesh
     2100000: Point Crystal
     2300000: //RootNode
+    2300002: Mesh
     3300000: //RootNode
+    3300002: Mesh
     4300000: Point_Crystal
+    4300002: Mesh
   externalObjects:
   - first:
       type: UnityEngine:Material

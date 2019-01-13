@@ -6,17 +6,41 @@ ModelImporter:
     100000: //RootNode
     100002: Frame
     100004: Panel
+    100006: Handle1
+    100008: Handle1_2
+    100010: Handle2
+    100012: Handles
+    100014: Lock_Frame
+    100016: Body
     400000: //RootNode
     400002: Frame
     400004: Panel
+    400006: Handle1
+    400008: Handle1_2
+    400010: Handle2
+    400012: Handles
+    400014: Lock_Frame
+    400016: Body
     2100000: walls
     2100002: Door
     2300000: Frame
     2300002: Panel
+    2300004: Handle1
+    2300006: Handle1_2
+    2300008: Lock_Frame
+    2300010: Body
     3300000: Frame
     3300002: Panel
+    3300004: Handle1
+    3300006: Handle1_2
+    3300008: Lock_Frame
+    3300010: Body
     4300000: Frame
     4300002: Panel
+    4300004: Lock_Frame
+    4300006: Handle1
+    4300008: Handle1_2
+    4300010: Body
   externalObjects: {}
   materials:
     importMaterials: 1

@@ -19,8 +19,13 @@ using Random = UnityEngine.Random;
 
 namespace Game
 {
-	public class PlayerArmRest : MonoBehaviour
-	{
+    public interface IPlayerArmRest
+    {
+        GameObject gameObject { get; }
+    }
+
+	public class PlayerArmRest : MonoBehaviour, IPlayerArmRest
+    {
 		
 	}
 }

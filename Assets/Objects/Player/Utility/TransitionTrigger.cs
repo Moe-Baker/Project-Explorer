@@ -1,0 +1,94 @@
+﻿using System;
+using System.IO;
+using System.Linq;
+using System.Collections;
+using System.Collections.Generic;
+
+using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+using UnityEngine.AI;
+
+#if UNITY_EDITOR
+using UnityEditor;
+using UnityEditorInternal;
+#endif
+
+using Object = UnityEngine.Object;
+using Random = UnityEngine.Random;
+
+namespace Game
+{
+	public class TransitionTrigger : MonoBehaviour
+	{
+		[SerializeField]
+        protected Room room1;
+        public Room Room1 { get { return room1; } }
+
+        [SerializeField]
+        protected Room room2;
+        public Room Room2 { get { return room2; } }
+
+        Player player;
+        new Camera camera;
+
+        void Awake()
+        {
+            player = FindObjectOfType<Player>();
+
+            camera = Camera.main;
+        }
+
+        void OnTriggerEnter(Collider collider)
+        {
+            if (collider.attachedRigidbody == null) return;
+            if (collider.attachedRigidbody.gameObject != player.gameObject) return;
+
+            var playerDistanceToRoom1 = Vector3.Distance(room1.Bounds.ClosestPoint(player.transform.position), player.transform.position);
+            var playerDistanceToRoom2 = Vector3.Distance(room2.Bounds.ClosestPoint(player.transform.position), player.transform.position);
+
+            Room target;
+
+            if (playerDistanceToRoom1 > playerDistanceToRoom2) //player is "probably" in room 2
+                target = room1;
+            else if (playerDistanceToRoom1 < playerDistanceToRoom2) //player is "probably" in room 1
+                target = room2;
+            else //player is half way between ? where the hell is the player ?
+                throw new NotImplementedException("This shouldn't be possible, so GG if you are getting this error");
+
+            StartCoroutine(Procedure(target));
+        }
+
+        IEnumerator Procedure(Room target)
+        {
+            var direction = (transform.position - target.transform.position).normalized;
+            direction.y = 0f;
+
+            var closestPoint = target.Bounds.ClosestPoint(transform.position);
+
+            var destination = closestPoint - direction * 1.2f;
+
+            player.Move.To(destination);
+
+            player.Navigator.enabled = false;
+            player.Move.To(destination);
+
+            var cameraStartPosition = camera.transform.position;
+
+            var cameraTargetPosition = target.Bounds.center;
+            cameraTargetPosition.y = camera.transform.position.y;
+
+            while (true)
+            {
+                camera.transform.position = Vector3.Lerp(cameraStartPosition, cameraTargetPosition, player.Move.DistanceRate);
+
+                if (player.Move.IsProcessing)
+                    yield return new WaitForEndOfFrame();
+                else
+                    break;
+            }
+
+            player.Navigator.enabled = true;
+        }
+    }
+}

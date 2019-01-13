@@ -23,8 +23,6 @@ namespace Game
     {
         public Room destination;
 
-        public float cameraTransitionSpeed = 10f;
-
         public Vector3 playerAnchorOffset = new Vector3(2f, 0f, 0f);
         public Vector3 PlayerAnchorPosition
         {

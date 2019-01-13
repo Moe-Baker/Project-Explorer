@@ -71,19 +71,19 @@ namespace Game
 
         void OnCollisionEnter(Collision collision)
         {
-            var target = collision.gameObject.GetComponent<PlayerArmRest>();
+            var target = collision.gameObject.GetComponent<IPlayerArmRest>();
 
             if (target == null) return;
-            if (target == ArmRest) return;
+            if (target == Target) return;
 
-            ArmRest = target;
+            Target = target;
         }
 
         void OnCollisionStay(Collision collision)
         {
-            if (ArmRest == null) return;
+            if (Target == null) return;
 
-            if (collision.gameObject == ArmRest.gameObject)
+            if (collision.gameObject == Target.gameObject)
             {
                 contact = collision.contacts.First().point;
                 contact.y = transform.position.y + heightOffset;
@@ -96,23 +96,24 @@ namespace Game
 
         void OnCollisionExit(Collision collision)
         {
-            var target = collision.gameObject.GetComponent<PlayerArmRest>();
+            var target = collision.gameObject.GetComponent<IPlayerArmRest>();
 
             if (target == null) return;
 
-            if (target == ArmRest)
-                ArmRest = null;
+            if (target == Target)
+                Target = null;
         }
 
 
-        public PlayerArmRest ArmRest { get; protected set; }
+        public IPlayerArmRest Target { get; protected set; }
+
         Vector3 contact;
         Vector3 localContact;
 
 
         void AnimatorIK(int layerIndex)
         {
-            if (ArmRest == null || localContact.z < -0.2f)
+            if (Target == null || localContact.z < -0.2f)
             {
                 RightHandIKWeightGoal = 0f;
                 LeftHandIKWeightGoal = 0f;
@@ -152,7 +153,7 @@ namespace Game
 
         void OnDrawGizmos()
         {
-            if(ArmRest != null)
+            if(Target != null && false)
             {
                 Gizmos.color = Color.yellow;
                 Gizmos.DrawSphere(contact, 0.2f);

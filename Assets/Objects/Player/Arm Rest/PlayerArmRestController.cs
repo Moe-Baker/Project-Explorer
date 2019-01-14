@@ -153,7 +153,7 @@ namespace Game
 
         void OnDrawGizmos()
         {
-            if(Target != null && false)
+            if(Target != null)
             {
                 Gizmos.color = Color.yellow;
                 Gizmos.DrawSphere(contact, 0.2f);

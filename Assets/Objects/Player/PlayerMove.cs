@@ -27,6 +27,13 @@ namespace Game
             this.player = player;
         }
 
+        public NavMeshAgent NavAgent { get { return player.NavAgent; } }
+        public Vector3 Destination { get { return NavAgent.destination; } }
+
+        new public Rigidbody rigidbody { get { return player.rigidbody; } }
+
+        public Animator Animator { get { return player.Body.Animator; } }
+
         public SpeedData speed = new SpeedData(5f);
         [Serializable]
         public struct SpeedData
@@ -57,11 +64,6 @@ namespace Game
             }
         }
 
-        public NavMeshAgent NavAgent { get { return player.NavAgent; } }
-        public Vector3 Destination { get { return NavAgent.destination; } }
-
-        public Animator Animator { get { return player.Body.Animator; } }
-
         #region Distance
         public float TotalDistance { get; set; }
 
@@ -89,8 +91,10 @@ namespace Game
         public bool IsProcessing { get { return coroutine != null; } }
         IEnumerator Procedure(Vector3 destination)
         {
-            NavAgent.SetDestination(destination);
             NavAgent.isStopped = false;
+            NavAgent.SetDestination(destination);
+
+            rigidbody.isKinematic = false;
 
             while (true)
             {
@@ -98,13 +102,21 @@ namespace Game
 
                 NavAgent.speed = speed.Evaluate(DistanceLeft);
 
-                if (DistanceLeft <= NavAgent.stoppingDistance + 0.0001f)
+                rigidbody.velocity = NavAgent.velocity;
+
+                if(NavAgent.velocity.magnitude * Time.deltaTime >= DistanceLeft)
+                {
+                    rigidbody.velocity = Vector3.zero;
+                    rigidbody.position = NavAgent.path.corners[1];
                     break;
+                }
 
                 yield return new WaitForEndOfFrame();
             }
 
             DistanceLeft = 0f;
+
+            rigidbody.isKinematic = true;
 
             NavAgent.isStopped = true;
             coroutine = null;

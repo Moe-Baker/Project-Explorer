@@ -70,15 +70,12 @@ namespace Game
                 if (IsLocked)
                 {
                     var direction = (player.transform.position - transform.position).normalized;
-                    direction.y = 0.5f;
 
-                    direction = transform.InverseTransformDirection(direction);
+                    var destination = transform.position + direction * 2f;
 
-                    direction.x = direction.y = 0.5f;
+                    player.Move.To(destination);
 
-                    direction = transform.TransformDirection(direction);
-
-                    player.Move.To(transform.position + direction * 2f);
+                    Debug.DrawLine(transform.position, destination, Color.green, 10f);
                 }
             }
         }

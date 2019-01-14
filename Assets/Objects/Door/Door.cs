@@ -69,9 +69,16 @@ namespace Game
             {
                 if (IsLocked)
                 {
-                    var direction = (player.transform.position - transform.position).normalized;
+                    var localPosition = transform.InverseTransformDirection(player.transform.position);
 
-                    var destination = transform.position + direction * 2f;
+                    localPosition.x = 0f;
+                    localPosition.y = 0f;
+
+                    var alignedPosition = transform.TransformDirection(localPosition);
+
+                    var direction = (alignedPosition - transform.position).normalized;
+
+                    var destination = transform.position + direction * 1f;
 
                     player.Move.To(destination);
 

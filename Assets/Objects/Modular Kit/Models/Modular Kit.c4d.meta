@@ -18,6 +18,8 @@ ModelImporter:
     100024: Frame
     100026: Frame_2
     100028: Door_Frame
+    100030: 4m_doorway_x1
+    100032: 4m_doorway_x2
     400000: 2m_floor
     400002: 2m_wall
     400004: 4m_floor
@@ -33,6 +35,8 @@ ModelImporter:
     400024: Frame
     400026: Frame_2
     400028: Door_Frame
+    400030: 4m_doorway_x1
+    400032: 4m_doorway_x2
     2000000: CINEMA_4D_Editor
     2100000: walls
     2100002: Floors
@@ -47,6 +51,8 @@ ModelImporter:
     2300014: Frame
     2300016: Frame_2
     2300018: Door_Frame
+    2300020: 4m_doorway_x1
+    2300022: 4m_doorway_x2
     3300000: 2m_floor
     3300002: 2m_wall
     3300004: 4m_floor
@@ -57,6 +63,8 @@ ModelImporter:
     3300014: Frame
     3300016: Frame_2
     3300018: Door_Frame
+    3300020: 4m_doorway_x1
+    3300022: 4m_doorway_x2
     4300000: 2m_wall
     4300002: 4m_wall
     4300004: 2m_floor
@@ -67,6 +75,8 @@ ModelImporter:
     4300014: Frame
     4300016: Frame_2
     4300018: Door_Frame
+    4300020: 4m_doorway_x1
+    4300022: 4m_doorway_x2
     9500000: //RootNode
     2186277476908879412: ImportLogs
   externalObjects:

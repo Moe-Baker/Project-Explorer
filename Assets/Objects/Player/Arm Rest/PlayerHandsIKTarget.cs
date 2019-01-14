@@ -19,13 +19,14 @@ using Random = UnityEngine.Random;
 
 namespace Game
 {
-    public interface IPlayerArmRest
+    public interface IPlayerHandsIKTarget
     {
-        GameObject gameObject { get; }
+        bool Active { get; }
     }
 
-	public class PlayerArmRest : MonoBehaviour, IPlayerArmRest
+	public class PlayerHandsIKTarget : MonoBehaviour, IPlayerHandsIKTarget
     {
-		
-	}
+        public bool Active = true;
+        bool IPlayerHandsIKTarget.Active { get { return Active; } }
+    }
 }

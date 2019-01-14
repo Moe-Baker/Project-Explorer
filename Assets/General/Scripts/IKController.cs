@@ -25,7 +25,7 @@ namespace Game
 
         public AvatarIKGoal Goal { get; protected set; }
 
-        protected float weight = 0f;
+        float weight = 0f;
         public float Weight
         {
             get

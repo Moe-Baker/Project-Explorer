@@ -4302,7 +4302,7 @@ GameObject:
   - component: {fileID: 492673585}
   - component: {fileID: 492673587}
   m_Layer: 10
-  m_Name: Affector
+  m_Name: Capsule Affector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6617,11 +6617,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 870977875}
-  speed:
-    set: 3
-    reset: 2
-  heightOffset: 0.2
-  normalOffset: 0.02
+  right:
+    heightOffset: 0.25
+    normalOffset: 0.04
+    speed:
+      set: 2
+      reset: 2
+  left:
+    heightOffset: 0.25
+    normalOffset: 0.04
+    speed:
+      set: 2
+      reset: 2
 --- !u!1001 &906163749
 PrefabInstance:
   m_ObjectHideFlags: 0

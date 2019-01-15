@@ -6621,14 +6621,22 @@ MonoBehaviour:
     heightOffset: 0.25
     normalOffset: 0.04
     speed:
-      set: 2
-      reset: 2
+      weight:
+        set: 1.5
+        reset: 0.5
+      position:
+        minimum: 2
+        maximum: 8
   left:
     heightOffset: 0.25
     normalOffset: 0.04
     speed:
-      set: 2
-      reset: 2
+      weight:
+        set: 1.5
+        reset: 0.5
+      position:
+        minimum: 2
+        maximum: 8
 --- !u!1001 &906163749
 PrefabInstance:
   m_ObjectHideFlags: 0

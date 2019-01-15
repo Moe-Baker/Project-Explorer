@@ -52,22 +52,61 @@ namespace Game
 
             public float normalOffset = 0f;
 
-            public SpeedData speed = new SpeedData(2f, 2f);
+            public SpeedData speed = new SpeedData(new SpeedData.WeightData(2f), new SpeedData.PositionData(2f, 8f));
             [Serializable]
             public struct SpeedData
             {
                 [SerializeField]
-                float set;
-                public float Set { get { return set; } }
+                WeightData weight;
+                public WeightData Weight { get { return weight; } }
+                [Serializable]
+                public struct WeightData
+                {
+                    [SerializeField]
+                    float set;
+                    public float Set { get { return set; } }
+
+                    [SerializeField]
+                    float reset;
+                    public float Reset { get { return reset; } }
+
+                    public WeightData(float set, float reset)
+                    {
+                        this.set = set;
+                        this.reset = reset;
+                    }
+
+                    public WeightData(float value) : this(value, value)
+                    {
+
+                    }
+                }
 
                 [SerializeField]
-                float reset;
-                public float Reset { get { return reset; } }
-
-                public SpeedData(float set, float reset)
+                PositionData position;
+                public PositionData Position { get { return position; } }
+                [Serializable]
+                public struct PositionData
                 {
-                    this.set = set;
-                    this.reset = reset;
+                    [SerializeField]
+                    float minimum;
+                    public float Minimum { get { return minimum; } }
+
+                    [SerializeField]
+                    float maximum;
+                    public float Maximum { get { return maximum; } }
+
+                    public PositionData(float minimum, float maximum)
+                    {
+                        this.minimum = minimum;
+                        this.maximum = maximum;
+                    }
+                }
+
+                public SpeedData(WeightData weight, PositionData position)
+                {
+                    this.weight = weight;
+                    this.position = position;
                 }
             }
 
@@ -95,9 +134,9 @@ namespace Game
 
                 if(target == null)
                 {
-                    targetPoint = Transform.TransformPoint(targetLocalPoint);
+                    targetLocalPoint = Transform.InverseTransformPoint(Controller.BoneTransform.position);
 
-                    localPoint = Vector3.MoveTowards(localPoint, targetLocalPoint, speed.Reset * Time.deltaTime);
+                    localPoint = Vector3.Lerp(targetLocalPoint, localPoint, Controller.Weight);
 
                     Controller.Position = Transform.TransformPoint(localPoint);
 
@@ -112,14 +151,15 @@ namespace Game
 
                     targetLocalPoint = Transform.InverseTransformPoint(targetPoint);
 
-                    localPoint = Vector3.MoveTowards(localPoint, targetLocalPoint, speed.Set * Time.deltaTime);
+                    var positionDelta = Mathf.Lerp(speed.Position.Maximum, speed.Position.Minimum, Controller.Weight);
+                    localPoint = Vector3.MoveTowards(localPoint, targetLocalPoint, positionDelta * Time.deltaTime);
 
                     Controller.Position = Transform.TransformPoint(localPoint);
                     weightTarget = 1f;
                 }
 
-                var delta = weightTarget < Controller.Weight ? speed.Reset : speed.Set;
-                Controller.Weight = Mathf.MoveTowards(Controller.Weight, weightTarget, delta * Time.deltaTime);
+                var weightDelta = weightTarget < Controller.Weight ? speed.Weight.Reset : speed.Weight.Set;
+                Controller.Weight = Mathf.MoveTowards(Controller.Weight, weightTarget, weightDelta * Time.deltaTime);
             }
         }
 

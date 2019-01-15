@@ -26,6 +26,7 @@ namespace Game
         public AvatarIKGoal Goal { get; protected set; }
 
         public HumanBodyBones Bone { get; protected set; }
+        public Transform BoneTransform { get; protected set; }
 
         float weight = 0f;
         public float Weight
@@ -76,6 +77,8 @@ namespace Game
                     Bone = HumanBodyBones.RightHand;
                     break;
             }
+
+            BoneTransform = animator.GetBoneTransform(Bone);
         }
     }
 }

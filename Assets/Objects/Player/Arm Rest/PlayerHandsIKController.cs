@@ -37,28 +37,15 @@ namespace Game
         [Serializable]
         public class CustomIKController
         {
-            public IKController IKController { get; protected set; }
+            public IKController Controller { get; protected set; }
 
             public Transform Transform { get; protected set; }
 
             public virtual void Init(Animator animator, AvatarIKGoal goal, Transform transform)
             {
-                IKController = new IKController(animator, goal);
+                Controller = new IKController(animator, goal);
 
                 this.Transform = transform;
-            }
-
-            protected Collision collision;
-            public Collision Collision
-            {
-                get
-                {
-                    return collision;
-                }
-                set
-                {
-                    collision = value;
-                }
             }
 
             public float heightOffset = 0.25f;
@@ -97,7 +84,9 @@ namespace Game
                 }
             }
 
-            Vector3 point;
+            Vector3 targetPoint;
+            Vector3 targetLocalPoint;
+
             Vector3 localPoint;
 
             public void Process()
@@ -106,25 +95,31 @@ namespace Game
 
                 if(target == null)
                 {
-                    weightTarget = 0f;
+                    targetPoint = Transform.TransformPoint(targetLocalPoint);
 
-                    IKController.Position = Transform.TransformPoint(localPoint);
+                    localPoint = Vector3.MoveTowards(localPoint, targetLocalPoint, speed.Reset * Time.deltaTime);
+
+                    Controller.Position = Transform.TransformPoint(localPoint);
+
+                    weightTarget = 0f;
                 }
                 else
                 {
-                    point = target.Point;
-                    point.y = Transform.position.y + heightOffset;
+                    targetPoint = target.Point;
 
-                    point += target.Normal * normalOffset;
+                    targetPoint.y = Transform.position.y + heightOffset;
+                    targetPoint += target.Normal * normalOffset;
 
-                    localPoint = Transform.InverseTransformPoint(point);
+                    targetLocalPoint = Transform.InverseTransformPoint(targetPoint);
 
-                    IKController.Position = point;
+                    localPoint = Vector3.MoveTowards(localPoint, targetLocalPoint, speed.Set * Time.deltaTime);
+
+                    Controller.Position = Transform.TransformPoint(localPoint);
                     weightTarget = 1f;
                 }
 
-                var delta = weightTarget < IKController.Weight ? speed.Reset : speed.Set;
-                IKController.Weight = Mathf.MoveTowards(IKController.Weight, weightTarget, delta * Time.deltaTime);
+                var delta = weightTarget < Controller.Weight ? speed.Reset : speed.Set;
+                Controller.Weight = Mathf.MoveTowards(Controller.Weight, weightTarget, delta * Time.deltaTime);
             }
         }
 
@@ -273,6 +268,7 @@ namespace Game
             right.Process();
             left.Process();
         }
+
 
         void OnDrawGizmos()
         {

@@ -25,6 +25,8 @@ namespace Game
 
         public AvatarIKGoal Goal { get; protected set; }
 
+        public HumanBodyBones Bone { get; protected set; }
+
         float weight = 0f;
         public float Weight
         {
@@ -55,6 +57,25 @@ namespace Game
         {
             this.Animator = animator;
             this.Goal = goal;
+
+            switch (goal)
+            {
+                case AvatarIKGoal.LeftFoot:
+                    Bone = HumanBodyBones.LeftFoot;
+                    break;
+
+                case AvatarIKGoal.RightFoot:
+                    Bone = HumanBodyBones.RightFoot;
+                    break;
+
+                case AvatarIKGoal.LeftHand:
+                    Bone = HumanBodyBones.LeftHand;
+                    break;
+
+                case AvatarIKGoal.RightHand:
+                    Bone = HumanBodyBones.RightHand;
+                    break;
+            }
         }
     }
 }

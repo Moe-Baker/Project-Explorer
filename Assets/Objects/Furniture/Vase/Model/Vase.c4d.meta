@@ -1,63 +1,15 @@
 fileFormatVersion: 2
-guid: 219e43d794bf36a4ba6fa87867a6c775
+guid: ed495479236f49145aa24e88e8686d33
 ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
-    100000: Body
-    100002: Container
-    100004: Drawer
-    100006: Front
-    100008: Handles
-    100010: Leg_0
-    100012: Leg_1
-    100014: Leg_2
-    100016: Leg_3
-    100018: Legs
-    100020: //RootNode
-    400000: Body
-    400002: Container
-    400004: Drawer
-    400006: Front
-    400008: Handles
-    400010: Leg_0
-    400012: Leg_1
-    400014: Leg_2
-    400016: Leg_3
-    400018: Legs
-    400020: //RootNode
-    2100000: Night Stand
-    2300000: Body
-    2300002: Container
-    2300004: Front
-    2300006: Handles
-    2300008: Leg_0
-    2300010: Leg_1
-    2300012: Leg_2
-    2300014: Leg_3
-    3300000: Body
-    3300002: Container
-    3300004: Front
-    3300006: Handles
-    3300008: Leg_0
-    3300010: Leg_1
-    3300012: Leg_2
-    3300014: Leg_3
-    4300000: Body
-    4300002: Handles
-    4300004: Container
-    4300006: Front
-    4300008: Leg_0
-    4300010: Leg_1
-    4300012: Leg_2
-    4300014: Leg_3
-    6400000: Body
-    6400002: Container
-    6400004: Front
-    6400006: Handles
-    6400008: Leg_0
-    6400010: Leg_1
-    6400012: Leg_2
-    6400014: Leg_3
+    100000: //RootNode
+    400000: //RootNode
+    2100000: Vase
+    2300000: //RootNode
+    3300000: //RootNode
+    4300000: Vase
+    6400000: //RootNode
   externalObjects: {}
   materials:
     importMaterials: 1

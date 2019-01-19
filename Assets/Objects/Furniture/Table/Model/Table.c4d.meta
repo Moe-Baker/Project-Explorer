@@ -11,6 +11,8 @@ ModelImporter:
     100010: Sides
     100012: //RootNode
     100014: Top
+    100016: Sides1
+    100018: Sides2
     400000: Leg_0
     400002: Leg_1
     400004: Leg_2
@@ -19,6 +21,8 @@ ModelImporter:
     400010: Sides
     400012: //RootNode
     400014: Top
+    400016: Sides1
+    400018: Sides2
     2100000: Table
     2300000: Leg_0
     2300002: Leg_1
@@ -26,18 +30,31 @@ ModelImporter:
     2300006: Leg_3
     2300008: Sides
     2300010: Top
+    2300012: Sides1
+    2300014: Sides2
     3300000: Leg_0
     3300002: Leg_1
     3300004: Leg_2
     3300006: Leg_3
     3300008: Sides
     3300010: Top
+    3300012: Sides1
+    3300014: Sides2
     4300000: Top
     4300002: Leg_0
     4300004: Leg_1
     4300006: Leg_2
     4300008: Leg_3
     4300010: Sides
+    4300012: Sides1
+    4300014: Sides2
+    6400000: Leg_0
+    6400002: Leg_1
+    6400004: Leg_2
+    6400006: Leg_3
+    6400008: Sides1
+    6400010: Sides2
+    6400012: Top
   externalObjects: {}
   materials:
     importMaterials: 1
@@ -71,7 +88,7 @@ ModelImporter:
     lODScreenPercentages: []
     globalScale: 0.01
     meshCompression: 0
-    addColliders: 0
+    addColliders: 1
     useSRGBMaterialColor: 1
     importVisibility: 1
     importBlendShapes: 1

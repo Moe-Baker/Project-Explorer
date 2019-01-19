@@ -33,6 +33,11 @@ ModelImporter:
     4300004: Leg_1
     4300006: Leg_2
     4300008: Leg_3
+    6400000: Body
+    6400002: Leg_0
+    6400004: Leg_1
+    6400006: Leg_2
+    6400008: Leg_3
   externalObjects: {}
   materials:
     importMaterials: 1
@@ -66,7 +71,7 @@ ModelImporter:
     lODScreenPercentages: []
     globalScale: 0.01
     meshCompression: 0
-    addColliders: 0
+    addColliders: 1
     useSRGBMaterialColor: 1
     importVisibility: 1
     importBlendShapes: 1

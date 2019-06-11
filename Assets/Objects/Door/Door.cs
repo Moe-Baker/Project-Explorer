@@ -21,49 +21,37 @@ namespace Game
 {
     public class Door : MonoBehaviour
     {
-        public HingeJoint Joint { get; protected set; }
+        public Lock Lock { get; protected set; }
+        public bool HasLock { get { return Lock != null; } }
+        public bool IsLocked { get { return HasLock ? Lock.IsOn : false; } }
 
-        public GameObject Panel { get { return Joint.gameObject; } }
-
-        new public Rigidbody rigidbody { get; protected set; }
-
-        public CollisionEventsRewind CollisionEventsRewind { get; protected set; }
-
-        public bool IsLocked
-        {
-            get
-            {
-                return rigidbody.isKinematic;
-            }
-            set
-            {
-                rigidbody.isKinematic = value;
-
-                if (OnLockStatChanged != null) OnLockStatChanged(IsLocked);
-            }
-        }
-        public event Action<bool> OnLockStatChanged;
+        public DoorPanel[] Panels { get; protected set; }
 
         Player player;
 
         void Awake()
         {
-            GetComponents();
+            Lock = GetComponent<Lock>();
 
-            CollisionEventsRewind = Panel.AddComponent<CollisionEventsRewind>();
-            CollisionEventsRewind.EnterEvent += PanelCollisionEnter;
+            if(HasLock)
+            {
+                Lock.OnStateChanged += OnLockStateChanged;
+            }
+
+            Panels = GetComponentsInChildren<DoorPanel>();
+            for (int i = 0; i < Panels.Length; i++)
+                Panels[i].Init(this);
 
             player = FindObjectOfType<Player>();
         }
 
-        void GetComponents()
+        void OnLockStateChanged(bool state)
         {
-            Joint = GetComponentInChildren<HingeJoint>();
-
-            rigidbody = Panel.GetComponent<Rigidbody>();
+            for (int i = 0; i < Panels.Length; i++)
+                Panels[i].SetLock(state);
         }
 
-        void PanelCollisionEnter(Collision collision)
+        public void OnPanelCollisionEnter(DoorPanel panel, Collision collision)
         {
             if(collision.gameObject == player.gameObject)
             {
@@ -84,28 +72,6 @@ namespace Game
 
                     Debug.DrawLine(transform.position, destination, Color.green, 10f);
                 }
-            }
-        }
-
-        [CustomEditor(typeof(Door))]
-        [CanEditMultipleObjects]
-        public class Inspector : Editor
-        {
-            new Door target;
-
-            void OnEnable()
-            {
-                target = (Door)base.target;
-
-                target.GetComponents();
-            }
-
-            public override void OnInspectorGUI()
-            {
-                base.OnInspectorGUI();
-
-                if (targets.Length == 1)
-                    target.IsLocked = EditorGUILayout.Toggle(nameof(target.IsLocked), target.IsLocked);
             }
         }
     }

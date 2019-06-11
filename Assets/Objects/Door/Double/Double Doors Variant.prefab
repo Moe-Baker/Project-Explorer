@@ -16,6 +16,18 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &6747644196672820918
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2094288353232703074}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b024dab4a7a9ffa488a28f69036927bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!54 &7300358365209342016
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -67,6 +79,18 @@ HingeJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
+--- !u!114 &2894114892334233513
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2094288353232703102}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7234f7a5909f3e049a021777472186c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &4944237562970207350
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -79,6 +103,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48ebd943c2f0e724fa2d815db51e564f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Active: 1
 --- !u!65 &6035028610317323196
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -143,6 +168,18 @@ HingeJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
+--- !u!114 &6736815800779300094
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2094288353232703096}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7234f7a5909f3e049a021777472186c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &8644407209759012115
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -155,6 +192,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48ebd943c2f0e724fa2d815db51e564f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Active: 1
 --- !u!65 &6847676696506601387
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -179,11 +217,19 @@ PrefabInstance:
       propertyPath: m_Name
       value: Double Doors Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 100002, guid: 55d7da717b06fd5438ce878ed26bd873, type: 3}
+      propertyPath: m_Layer
+      value: 20
+      objectReference: {fileID: 0}
     - target: {fileID: 100000, guid: 55d7da717b06fd5438ce878ed26bd873, type: 3}
       propertyPath: m_Layer
       value: 20
       objectReference: {fileID: 0}
-    - target: {fileID: 100002, guid: 55d7da717b06fd5438ce878ed26bd873, type: 3}
+    - target: {fileID: 100030, guid: 55d7da717b06fd5438ce878ed26bd873, type: 3}
+      propertyPath: m_Layer
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 100024, guid: 55d7da717b06fd5438ce878ed26bd873, type: 3}
       propertyPath: m_Layer
       value: 20
       objectReference: {fileID: 0}
@@ -219,19 +265,11 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 20
       objectReference: {fileID: 0}
-    - target: {fileID: 100024, guid: 55d7da717b06fd5438ce878ed26bd873, type: 3}
-      propertyPath: m_Layer
-      value: 20
-      objectReference: {fileID: 0}
     - target: {fileID: 100026, guid: 55d7da717b06fd5438ce878ed26bd873, type: 3}
       propertyPath: m_Layer
       value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 100028, guid: 55d7da717b06fd5438ce878ed26bd873, type: 3}
-      propertyPath: m_Layer
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 100030, guid: 55d7da717b06fd5438ce878ed26bd873, type: 3}
       propertyPath: m_Layer
       value: 20
       objectReference: {fileID: 0}

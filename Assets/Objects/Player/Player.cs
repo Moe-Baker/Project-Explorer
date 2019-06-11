@@ -22,6 +22,7 @@ namespace Game
     [RequireComponent(typeof(NavMeshAgent))]
     [RequireComponent(typeof(CapsuleCollider))]
     [RequireComponent(typeof(Rigidbody))]
+    [RequireComponent(typeof(CollisionEventsRewind))]
     [DefaultExecutionOrder(-100)]
     public class Player : MonoBehaviour
 	{
@@ -39,34 +40,55 @@ namespace Game
 
         new public Rigidbody rigidbody { get; protected set; }
 
+        public CollisionEventsRewind CollisionEventsRewind { get; protected set; }
+
+        public CameraRig CameraRig { get; protected set; }
+        new public Camera camera { get { return CameraRig.camera; } }
+
         public NavMeshAgent NavAgent { get; protected set; }
 
         public PlayerBody Body { get; protected set; }
+
+        public PlayerInteract Interact { get; protected set; }
 
         public PlayerMove Move { get; protected set; }
 
         public PlayerNavigator Navigator { get; protected set; }
 
-        new public Camera camera { get; protected set; }
+        public PlayerHandsIK HandsIK { get; protected set; }
 
         void Awake()
         {
-            camera = Camera.main;
-
             collider = GetComponent<CapsuleCollider>();
 
             rigidbody = GetComponent<Rigidbody>();
+
+            CollisionEventsRewind = GetComponent<CollisionEventsRewind>();
+
+            CameraRig = FindObjectOfType<CameraRig>();
+            if (CameraRig == null) throw new NullReferenceException("Player cannot find a Camera Rig in scene");
 
             NavAgent = GetComponent<NavMeshAgent>();
 
             Body = GetComponentInChildren<PlayerBody>();
             Body.Init(this);
 
+            Interact = GetComponentInChildren<PlayerInteract>();
+            Interact.Init(this);
+
             Move = GetComponentInChildren<PlayerMove>();
             Move.Init(this);
 
             Navigator = GetComponentInChildren<PlayerNavigator>();
             Navigator.Init(this);
+
+            HandsIK = GetComponentInChildren<PlayerHandsIK>();
+            HandsIK.Init(this);
+        }
+
+        public float DistanceTo(Transform target)
+        {
+            return Vector3.Distance(transform.position, target.position);
         }
 	}
 }

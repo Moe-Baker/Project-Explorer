@@ -30,13 +30,11 @@ namespace Game
         public Room Room2 { get { return room2; } }
 
         Player player;
-        new Camera camera;
+        public CameraRig CameraRig { get { return player.CameraRig; } }
 
         void Awake()
         {
             player = FindObjectOfType<Player>();
-
-            camera = Camera.main;
         }
 
         void OnTriggerEnter(Collider collider)
@@ -73,14 +71,14 @@ namespace Game
             player.Navigator.enabled = false;
             player.Move.To(destination);
 
-            var cameraStartPosition = camera.transform.position;
+            var cameraStartPosition = CameraRig.transform.position;
 
-            var cameraTargetPosition = target.Bounds.center;
-            cameraTargetPosition.y = camera.transform.position.y;
+            var cameraEndPosition = target.Bounds.center;
+            cameraEndPosition.y = cameraStartPosition.y;
 
             while (true)
             {
-                camera.transform.position = Vector3.Lerp(cameraStartPosition, cameraTargetPosition, player.Move.DistanceRate);
+                CameraRig.transform.position = Vector3.Lerp(cameraStartPosition, cameraEndPosition, player.Move.DistanceRate);
 
                 if (player.Move.IsProcessing)
                     yield return new WaitForEndOfFrame();

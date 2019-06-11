@@ -107,7 +107,7 @@ namespace Game
                 if(NavAgent.velocity.magnitude * Time.deltaTime >= DistanceLeft)
                 {
                     rigidbody.velocity = Vector3.zero;
-                    rigidbody.position = NavAgent.path.corners[1];
+                    rigidbody.position = NavAgent.path.corners[0];
                     break;
                 }
 

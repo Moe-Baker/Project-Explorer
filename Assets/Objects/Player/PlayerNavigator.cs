@@ -23,11 +23,12 @@ namespace Game
 	{
         Player player;
 
-        new public Camera camera { get { return player.camera; } }
+        public CameraRig CameraRig { get { return player.CameraRig; } }
+        new public Camera camera { get { return CameraRig.camera; } }
+
+        PlayerInteract Interact { get { return player.Interact; } }
 
         PlayerMove Move { get { return player.Move; } }
-
-        public LayerMask mask = Physics.DefaultRaycastLayers;
 
         public void Init(Player player)
         {
@@ -40,20 +41,14 @@ namespace Game
         {
             if(Input.GetMouseButton(0))
             {
-                var screenPoint = Input.mousePosition;
-                screenPoint.z = camera.nearClipPlane;
-
-                var ray = camera.ScreenPointToRay(screenPoint);
-
-                RaycastHit rayHit;
-
-                if(Physics.Raycast(ray, out rayHit, Mathf.Infinity, mask, QueryTriggerInteraction.Ignore))
+                if(Interact.HasHit)
                 {
                     NavMeshHit navHit;
 
-                    if(NavMesh.SamplePosition(rayHit.point, out navHit, 4f, NavMesh.AllAreas))
+                    if(NavMesh.SamplePosition(Interact.Hit.point, out navHit, 4f, NavMesh.AllAreas))
                     {
-                        Move.To(rayHit.point);
+                        Move.To(navHit.position);
+
                         if (OnSelect != null) OnSelect(navHit.position);
                     }
                     else

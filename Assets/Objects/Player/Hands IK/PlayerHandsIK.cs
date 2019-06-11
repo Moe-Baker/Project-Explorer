@@ -19,12 +19,9 @@ using Random = UnityEngine.Random;
 
 namespace Game
 {
-	public class PlayerHandsIKController : MonoBehaviour
+	public class PlayerHandsIK : MonoBehaviour
 	{
-        public Player player;
-
-        public PlayerBody Body { get { return player.Body; } }
-        public Animator Animator { get { return Body.Animator; } }
+        
 
         [SerializeField]
         protected CustomIKController right;
@@ -163,17 +160,26 @@ namespace Game
             }
         }
 
+        Player player;
+        public PlayerBody Body { get { return player.Body; } }
+        public Animator Animator { get { return Body.Animator; } }
 
-        void Start()
+        public void Init(Player reference)
         {
+            this.player = reference;
+
+            player.CollisionEventsRewind.EnterEvent += OnPlayerCollisionEnter;
+            player.CollisionEventsRewind.StayEvent += OnPlayerCollisionStay;
+            player.CollisionEventsRewind.ExitEvent += OnPlayerCollisionExit;
+
             Body.AnimatorIKEvent += AnimatorIK;
 
-            right.Init(Animator, AvatarIKGoal.RightHand, player.transform);
-            left.Init(Animator, AvatarIKGoal.LeftHand, player.transform);
+            right.Init(Animator, AvatarIKGoal.RightHand, reference.transform);
+            left.Init(Animator, AvatarIKGoal.LeftHand, reference.transform);
         }
 
 
-        void OnCollisionEnter(Collision collision)
+        void OnPlayerCollisionEnter(Collision collision)
         {
             var target = collision.gameObject.GetComponent<IPlayerHandsIKTarget>();
 
@@ -190,7 +196,7 @@ namespace Game
             Targets.Add(new TargetData(collision));
         }
 
-        void OnCollisionStay(Collision collision)
+        void OnPlayerCollisionStay(Collision collision)
         {
             var target = collision.gameObject.GetComponent<IPlayerHandsIKTarget>();
 
@@ -213,7 +219,7 @@ namespace Game
                 Targets.Add(new TargetData(collision));
         }
 
-        void OnCollisionExit(Collision collision)
+        void OnPlayerCollisionExit(Collision collision)
         {
             var target = collision.gameObject.GetComponent<IPlayerHandsIKTarget>();
 

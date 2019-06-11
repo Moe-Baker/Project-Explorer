@@ -21,48 +21,43 @@ namespace Game
 {
     public class PlayerMove : MonoBehaviour
     {
+        [SerializeField]
+        protected float baseOffset = 0.9f;
+        public float BaseOffset { get { return baseOffset; } }
+
         Player player;
         public void Init(Player player)
         {
             this.player = player;
-        }
 
-        public NavMeshAgent NavAgent { get { return player.NavAgent; } }
-        public Vector3 Destination { get { return NavAgent.destination; } }
+            Path = new NavMeshPath();
+        }
 
         new public Rigidbody rigidbody { get { return player.rigidbody; } }
 
-        public Animator Animator { get { return player.Body.Animator; } }
-
-        public SpeedData speed = new SpeedData(5f);
-        [Serializable]
-        public struct SpeedData
+        public Vector3 Velocity
         {
-            [SerializeField]
-            float value;
-            public float Value { get { return value; } }
-
-            [SerializeField]
-            AnimationCurve distanceMultiplier;
-            public AnimationCurve DistanceMultipler { get { return distanceMultiplier; } }
-
-            public float Evaluate(float distance)
+            get
             {
-                return value * distanceMultiplier.Evaluate(distance);
+                return Vector3.Scale(rigidbody.velocity, Vector3.right + Vector3.forward);
             }
-
-            public SpeedData(float value)
+            set
             {
-                this.value = value;
-
-                distanceMultiplier = new AnimationCurve()
-                {
-                    keys = new Keyframe[] { new Keyframe(0f, 0.2f), new Keyframe(2f, 1f) },
-                    postWrapMode = WrapMode.Clamp,
-                    preWrapMode = WrapMode.Clamp
-                };
+                rigidbody.velocity = new Vector3(value.x, rigidbody.velocity.y, value.z);
             }
         }
+
+        public PlayerLook Look { get { return player.Look; } }
+
+        public Animator Animator { get { return player.Body.Animator; } }
+
+        [SerializeField]
+        protected float speed = 3f;
+        public float Speed { get { return speed; } }
+
+        [SerializeField]
+        protected float acceleration;
+        public float Acceleration { get { return acceleration; } }
 
         #region Distance
         public float TotalDistance { get; set; }
@@ -74,59 +69,95 @@ namespace Game
         public float DistanceRate { get { return DistanceTraveled / TotalDistance; } }
         #endregion
 
+        public Vector3 Destination { get; protected set; }
+
+        public NavMeshPath Path { get; protected set; }
+
         public void To(Vector3 target)
         {
             if (Vector3.Distance(target, Destination) <= 0.1 + 0.05f)
                 return;
 
-            TotalDistance = DistanceLeft = Vector3.Distance(player.GroundPosition, target);
+            if (NavMesh.CalculatePath(player.transform.position, target, NavMesh.AllAreas, Path))
+            {
+                TotalDistance = DistanceLeft = CalculateDistance(Path);
 
-            if (IsProcessing)
-                NavAgent.SetDestination(target);
+                if (IsProcessing)
+                    Stop();
+                else
+                    coroutine = StartCoroutine(Procedure(target));
+            }
             else
-                coroutine = StartCoroutine(Procedure(target));
+            {
+                Debug.LogError("Navigation Error");
+            }
         }
 
         Coroutine coroutine;
         public bool IsProcessing { get { return coroutine != null; } }
-        IEnumerator Procedure(Vector3 destination)
+        IEnumerator Procedure(Vector3 target)
         {
-            NavAgent.isStopped = false;
-            NavAgent.SetDestination(destination);
+            Destination = target;
 
-            rigidbody.isKinematic = false;
+            var direction = Vector3.zero;
 
             while (true)
             {
-                DistanceLeft = Vector3.Distance(player.GroundPosition, Destination);
-
-                NavAgent.speed = speed.Evaluate(DistanceLeft);
-
-                rigidbody.velocity = NavAgent.velocity;
-
-                if(NavAgent.velocity.magnitude * Time.deltaTime >= DistanceLeft)
+                if (NavMesh.CalculatePath(player.transform.position, Destination, NavMesh.AllAreas, Path))
                 {
-                    rigidbody.velocity = Vector3.zero;
-                    rigidbody.position = NavAgent.path.corners[0];
+                    DistanceLeft = CalculateDistance(Path);
+
+                    if (rigidbody.velocity.magnitude * Time.deltaTime >= DistanceLeft)
+                    {
+                        DistanceLeft = 0f;
+
+                        transform.position = Path.corners.Last() + Vector3.up * baseOffset;
+
+                        Velocity = Vector3.zero;
+
+                        break;
+                    }
+                    else
+                    {
+                        direction = (Path.corners[1] - player.transform.position + Vector3.up * baseOffset).normalized;
+
+                        Look.At(direction);
+
+                        var distanceMultiplier = Mathf.Clamp(DistanceLeft / 1f, 0.4f, 1f);
+
+                        Velocity = Vector3.MoveTowards(Velocity, direction * speed * distanceMultiplier, acceleration * Time.deltaTime);
+                    }
+                }
+                else
+                {
+                    Debug.LogError("Navigation Error");
+
                     break;
                 }
 
-                yield return new WaitForEndOfFrame();
+                yield return null;
             }
 
-            DistanceLeft = 0f;
+            while(Look.At(direction) != 0f)
+                yield return null;
 
-            rigidbody.isKinematic = true;
-
-            NavAgent.isStopped = true;
             coroutine = null;
+        }
+        
+        protected float CalculateDistance(NavMeshPath path)
+        {
+            var value = 0f;
+
+            for (int i = 0; i < path.corners.Length - 1; i++)
+                value += Vector3.Distance(path.corners[i], path.corners[i + 1]);
+
+            return value;
         }
 
         public void Stop()
         {
             if (IsProcessing)
             {
-                NavAgent.isStopped = true;
                 StopCoroutine(coroutine);
                 coroutine = null;
             }
@@ -134,7 +165,7 @@ namespace Game
 
         void Update()
         {
-            Animator.SetFloat("Speed", NavAgent.velocity.magnitude);
+            Animator.SetFloat("Speed", rigidbody.velocity.magnitude * Mathf.Clamp01(DistanceLeft / 0.25f));
         }
     }
 }

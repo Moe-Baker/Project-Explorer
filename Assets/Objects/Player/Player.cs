@@ -19,7 +19,6 @@ using Random = UnityEngine.Random;
 
 namespace Game
 {
-    [RequireComponent(typeof(NavMeshAgent))]
     [RequireComponent(typeof(CapsuleCollider))]
     [RequireComponent(typeof(Rigidbody))]
     [RequireComponent(typeof(CollisionEventsRewind))]
@@ -45,13 +44,12 @@ namespace Game
         public CameraRig CameraRig { get; protected set; }
         new public Camera camera { get { return CameraRig.camera; } }
 
-        public NavMeshAgent NavAgent { get; protected set; }
-
         public PlayerBody Body { get; protected set; }
 
         public PlayerInteract Interact { get; protected set; }
 
         public PlayerMove Move { get; protected set; }
+        public PlayerLook Look { get; protected set; }
 
         public PlayerNavigator Navigator { get; protected set; }
 
@@ -68,8 +66,6 @@ namespace Game
             CameraRig = FindObjectOfType<CameraRig>();
             if (CameraRig == null) throw new NullReferenceException("Player cannot find a Camera Rig in scene");
 
-            NavAgent = GetComponent<NavMeshAgent>();
-
             Body = GetComponentInChildren<PlayerBody>();
             Body.Init(this);
 
@@ -78,6 +74,9 @@ namespace Game
 
             Move = GetComponentInChildren<PlayerMove>();
             Move.Init(this);
+
+            Look = GetComponentInChildren<PlayerLook>();
+            Look.Init(this);
 
             Navigator = GetComponentInChildren<PlayerNavigator>();
             Navigator.Init(this);

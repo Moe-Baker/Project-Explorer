@@ -26,9 +26,11 @@ namespace Game
         public float BaseOffset { get { return baseOffset; } }
 
         Player player;
-        public void Init(Player player)
+        public void Init(Player reference)
         {
-            this.player = player;
+            this.player = reference;
+
+            player.CollisionEventsRewind.EnterEvent += OnPlayerCollisionEnter;
 
             Path = new NavMeshPath();
         }
@@ -78,20 +80,24 @@ namespace Game
             if (Vector3.Distance(target, Destination) <= 0.1 + 0.05f)
                 return;
 
+            if (IsProcessing) Stop();
+
             if (NavMesh.CalculatePath(player.transform.position, target, NavMesh.AllAreas, Path))
             {
                 TotalDistance = DistanceLeft = CalculateDistance(Path);
 
-                if (IsProcessing)
-                    Stop();
-                else
-                    coroutine = StartCoroutine(Procedure(target));
+                target = Path.corners.Last();
+
+                if (OnMove != null) OnMove(target);
+
+                coroutine = StartCoroutine(Procedure(target));
             }
             else
             {
                 Debug.LogError("Navigation Error");
             }
         }
+        public event Action<Vector3> OnMove;
 
         Coroutine coroutine;
         public bool IsProcessing { get { return coroutine != null; } }
@@ -154,11 +160,31 @@ namespace Game
             return value;
         }
 
+        void OnPlayerCollisionEnter(Collision collision)
+        {
+            if(collision.rigidbody == null)
+            {
+
+            }
+            else
+            {
+                if (collision.rigidbody.isKinematic)
+                {
+                    var direction = (player.transform.position - collision.contacts.First().point).normalized;
+
+                    To(player.transform.position + direction * 1f);
+                }
+            }
+        }
+
         public void Stop()
         {
+            TotalDistance = DistanceLeft = 0f;
+
             if (IsProcessing)
             {
                 StopCoroutine(coroutine);
+
                 coroutine = null;
             }
         }

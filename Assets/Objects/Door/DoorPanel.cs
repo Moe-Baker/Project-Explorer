@@ -28,6 +28,8 @@ namespace Game
         new public Rigidbody rigidbody { get; protected set; }
 
         Door door;
+        public Door Door { get { return door; } }
+        public bool IsLocked { get { return door.IsLocked; } }
 
         public virtual void Init(Door door)
         {

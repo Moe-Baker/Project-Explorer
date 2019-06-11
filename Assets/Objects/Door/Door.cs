@@ -27,8 +27,6 @@ namespace Game
 
         public DoorPanel[] Panels { get; protected set; }
 
-        Player player;
-
         void Awake()
         {
             Lock = GetComponent<Lock>();
@@ -41,8 +39,6 @@ namespace Game
             Panels = GetComponentsInChildren<DoorPanel>();
             for (int i = 0; i < Panels.Length; i++)
                 Panels[i].Init(this);
-
-            player = FindObjectOfType<Player>();
         }
 
         void OnLockStateChanged(bool state)
@@ -53,26 +49,7 @@ namespace Game
 
         public void OnPanelCollisionEnter(DoorPanel panel, Collision collision)
         {
-            if(collision.gameObject == player.gameObject)
-            {
-                if (IsLocked)
-                {
-                    var localPosition = transform.InverseTransformDirection(player.transform.position);
-
-                    localPosition.x = 0f;
-                    localPosition.y = 0f;
-
-                    var alignedPosition = transform.TransformDirection(localPosition);
-
-                    var direction = (alignedPosition - transform.position).normalized;
-
-                    var destination = transform.position + direction * 1f;
-
-                    player.Move.To(destination);
-
-                    Debug.DrawLine(transform.position, destination, Color.green, 10f);
-                }
-            }
+            
         }
     }
 }

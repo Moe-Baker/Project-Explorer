@@ -29,6 +29,10 @@ namespace Game
         protected Room room2;
         public Room Room2 { get { return room2; } }
 
+        [SerializeField]
+        protected float offset = 1.2f;
+        public float Offset { get { return offset; } }
+
         Player player;
         public CameraRig CameraRig { get { return player.CameraRig; } }
 
@@ -42,14 +46,14 @@ namespace Game
             if (collider.attachedRigidbody == null) return;
             if (collider.attachedRigidbody.gameObject != player.gameObject) return;
 
-            var playerDistanceToRoom1 = Vector3.Distance(room1.Bounds.ClosestPoint(player.transform.position), player.transform.position);
-            var playerDistanceToRoom2 = Vector3.Distance(room2.Bounds.ClosestPoint(player.transform.position), player.transform.position);
+            var distanceToRoom1 = Vector3.Distance(room1.Bounds.ClosestPoint(player.transform.position), player.transform.position);
+            var distanceToRoom2 = Vector3.Distance(room2.Bounds.ClosestPoint(player.transform.position), player.transform.position);
 
             Room target;
 
-            if (playerDistanceToRoom1 > playerDistanceToRoom2) //player is "probably" in room 2
+            if (distanceToRoom1 > distanceToRoom2) //player is "probably" in room 2
                 target = room1;
-            else if (playerDistanceToRoom1 < playerDistanceToRoom2) //player is "probably" in room 1
+            else if (distanceToRoom1 < distanceToRoom2) //player is "probably" in room 1
                 target = room2;
             else //player is half way between ? where the hell is the player ?
                 throw new NotImplementedException("This shouldn't be possible, so GG if you are getting this error");
@@ -64,7 +68,7 @@ namespace Game
 
             var closestPoint = target.Bounds.ClosestPoint(transform.position);
 
-            var destination = closestPoint - direction * 1.2f;
+            var destination = closestPoint - direction * offset;
 
             player.Move.To(destination);
 

@@ -19,6 +19,7 @@ using Random = UnityEngine.Random;
 
 namespace Game
 {
+    [SelectionBase]
 	public class Interactable : MonoBehaviour
 	{
 		[SerializeField]

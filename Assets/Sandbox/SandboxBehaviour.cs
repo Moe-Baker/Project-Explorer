@@ -23,9 +23,7 @@ namespace Game
 	{
         new public Rigidbody rigidbody;
 
-        public Transform target;
-
-        public float speed = 50f;
+        public float speed = 3f;
 
         void Start()
         {
@@ -34,20 +32,7 @@ namespace Game
 
         void Update()
         {
-            float angle = CalculateAngle();
-
-            var direction = (target.position - rigidbody.transform.position).normalized;
-
-            var targetAngles = Quaternion.LookRotation(direction, rigidbody.transform.up).eulerAngles;
-
-            var angularDirection = (targetAngles - rigidbody.transform.eulerAngles).normalized;
-
-            rigidbody.angularVelocity = angularDirection * speed * Time.deltaTime;
-        }
-
-        float CalculateAngle()
-        {
-            return Quaternion.Angle(rigidbody.transform.rotation, target.rotation);
+            
         }
     }
 }

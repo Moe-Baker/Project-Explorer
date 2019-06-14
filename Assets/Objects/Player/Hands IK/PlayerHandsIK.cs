@@ -21,8 +21,6 @@ namespace Game
 {
 	public class PlayerHandsIK : MonoBehaviour
 	{
-        
-
         [SerializeField]
         protected CustomIKController right;
         public CustomIKController Right { get { return right; } }

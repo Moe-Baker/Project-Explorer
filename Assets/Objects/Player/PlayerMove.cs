@@ -25,15 +25,15 @@ namespace Game
         protected float baseOffset = 0.9f;
         public float BaseOffset { get { return baseOffset; } }
 
+        [SerializeField]
+        protected float speed = 3f;
+        public float Speed { get { return speed; } }
+
+        [SerializeField]
+        protected float acceleration;
+        public float Acceleration { get { return acceleration; } }
+
         Player player;
-        public void Init(Player reference)
-        {
-            this.player = reference;
-
-            player.CollisionEventsRewind.EnterEvent += OnPlayerCollisionEnter;
-
-            Path = new NavMeshPath();
-        }
 
         new public Rigidbody rigidbody { get { return player.rigidbody; } }
 
@@ -53,14 +53,6 @@ namespace Game
 
         public Animator Animator { get { return player.Body.Animator; } }
 
-        [SerializeField]
-        protected float speed = 3f;
-        public float Speed { get { return speed; } }
-
-        [SerializeField]
-        protected float acceleration;
-        public float Acceleration { get { return acceleration; } }
-
         #region Distance
         public float TotalDistance { get; set; }
 
@@ -75,6 +67,18 @@ namespace Game
 
         public NavMeshPath Path { get; protected set; }
 
+        public void Init(Player reference)
+        {
+            this.player = reference;
+
+            Destination = transform.position + Vector3.down * baseOffset;
+
+            player.CollisionEventsRewind.EnterEvent += OnPlayerCollisionEnter;
+
+            Path = new NavMeshPath();
+        }
+
+        public event Action<Vector3> OnMove;
         public void To(Vector3 target)
         {
             if (Vector3.Distance(target, Destination) <= 0.1 + 0.05f)
@@ -97,7 +101,6 @@ namespace Game
                 Debug.LogError("Navigation Error");
             }
         }
-        public event Action<Vector3> OnMove;
 
         Coroutine coroutine;
         public bool IsProcessing { get { return coroutine != null; } }
@@ -149,7 +152,12 @@ namespace Game
 
             coroutine = null;
         }
-        
+
+        void Update()
+        {
+            Animator.SetFloat("Speed", rigidbody.velocity.magnitude * Mathf.Clamp01(DistanceLeft / 0.25f));
+        }
+
         protected float CalculateDistance(NavMeshPath path)
         {
             var value = 0f;
@@ -189,9 +197,20 @@ namespace Game
             }
         }
 
-        void Update()
+        void OnDrawGizmos()
         {
-            Animator.SetFloat("Speed", rigidbody.velocity.magnitude * Mathf.Clamp01(DistanceLeft / 0.25f));
+            if(Path != null)
+            {
+                Gizmos.color = Color.yellow;
+
+                for (int i = 0; i < Path.corners.Length; i++)
+                {
+                    Gizmos.DrawSphere(Path.corners[i] + Vector3.up * 0.5f, 0.1f);
+
+                    if (i < Path.corners.Length - 1)
+                        Gizmos.DrawLine(Path.corners[i] + Vector3.up * 0.5f, Path.corners[i + 1] + Vector3.up * 0.5f);
+                }
+            }
         }
     }
 }

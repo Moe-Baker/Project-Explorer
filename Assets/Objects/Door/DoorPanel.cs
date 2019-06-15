@@ -36,6 +36,7 @@ namespace Game
             this.door = door;
 
             rigidbody = GetComponent<Rigidbody>();
+            rigidbody.mass = 0f;
 
             Joint = GetComponent<HingeJoint>();
 

@@ -19,20 +19,14 @@ using Random = UnityEngine.Random;
 
 namespace Game
 {
-	public class SandboxBehaviour : MonoBehaviour
+	public class LoadSceneOperation : Operation.Behaviour
 	{
-        new public Rigidbody rigidbody;
+        public GameScene target;
+        public LoadSceneMode loadMode = LoadSceneMode.Single;
 
-        public float speed = 3f;
-
-        void Start()
+        public override void Execute()
         {
-            rigidbody.centerOfMass = Vector3.zero;
-        }
-
-        void Update()
-        {
-            
+            SceneManager.LoadScene(target, loadMode);
         }
     }
 }

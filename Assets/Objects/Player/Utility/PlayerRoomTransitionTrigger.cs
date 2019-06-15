@@ -70,9 +70,8 @@ namespace Game
 
             var destination = closestPoint - direction * offset;
 
-            player.Move.To(destination);
-
             player.Navigator.enabled = false;
+
             player.Move.To(destination);
 
             var cameraStartPosition = CameraRig.transform.position;

@@ -22,26 +22,10 @@ namespace Game
 	public class Room : MonoBehaviour
 	{
         public Bounds Bounds { get; protected set; }
-        void CalculateBounds()
-        {
-            var temp = new Bounds();
-
-            var renderers = GetComponentsInChildren<Renderer>();
-
-            for (int i = 0; i < renderers.Length; i++)
-            {
-                if (i == 0)
-                    temp = renderers[i].bounds;
-                else
-                    temp.Encapsulate(renderers[i].bounds);
-            }
-
-            Bounds = temp;
-        }
 
         void Awake()
         {
-            CalculateBounds();
+            Bounds = Utility.CalculateBounds(gameObject);
         }
 
         void OnDrawGizmosSelected()

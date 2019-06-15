@@ -22,34 +22,25 @@ namespace Game
     public class PlayerMove : MonoBehaviour
     {
         [SerializeField]
-        protected float baseOffset = 0.9f;
-        public float BaseOffset { get { return baseOffset; } }
-
-        [SerializeField]
         protected float speed = 3f;
         public float Speed { get { return speed; } }
 
         [SerializeField]
-        protected float acceleration;
+        protected float acceleration = 4;
         public float Acceleration { get { return acceleration; } }
 
         Player player;
 
+        new public CapsuleCollider collider { get { return player.collider; } }
+        public float HeightOffset { get { return collider.height / 2f; } }
+
         new public Rigidbody rigidbody { get { return player.rigidbody; } }
 
-        public Vector3 Velocity
-        {
-            get
-            {
-                return Vector3.Scale(rigidbody.velocity, Vector3.right + Vector3.forward);
-            }
-            set
-            {
-                rigidbody.velocity = new Vector3(value.x, rigidbody.velocity.y, value.z);
-            }
-        }
+        public PlayerGroundCheck GroundCheck { get { return player.GroundCheck; } }
 
         public PlayerLook Look { get { return player.Look; } }
+
+        public PlayerHandsIK HandsIK { get { return player.HandsIK; } }
 
         public Animator Animator { get { return player.Body.Animator; } }
 
@@ -71,7 +62,7 @@ namespace Game
         {
             this.player = reference;
 
-            Destination = transform.position + Vector3.down * baseOffset;
+            Destination = player.transform.position + Vector3.down * HeightOffset;
 
             player.CollisionEventsRewind.EnterEvent += OnPlayerCollisionEnter;
 
@@ -110,6 +101,8 @@ namespace Game
 
             var direction = Vector3.zero;
 
+            var velocity = rigidbody.velocity; velocity.y = 0f;
+
             while (true)
             {
                 if (NavMesh.CalculatePath(player.transform.position, Destination, NavMesh.AllAreas, Path))
@@ -118,23 +111,43 @@ namespace Game
 
                     if (rigidbody.velocity.magnitude * Time.deltaTime >= DistanceLeft)
                     {
+                        SetFriction(1, PhysicMaterialCombine.Maximum);
+
                         DistanceLeft = 0f;
 
-                        transform.position = Path.corners.Last() + Vector3.up * baseOffset;
+                        var position = player.transform.position;
+                        {
+                            position.x = Path.corners.Last().x;
+                            position.z = Path.corners.Last().z;
+                        }
+                        player.transform.position = position;
 
-                        Velocity = Vector3.zero;
+                        rigidbody.velocity -= velocity;
 
                         break;
                     }
                     else
                     {
-                        direction = (Path.corners[1] - player.transform.position + Vector3.up * baseOffset).normalized;
+                        SetFriction(0, PhysicMaterialCombine.Minimum);
+
+                        direction = (Path.corners[1] - player.transform.position); direction.y = 0f;
+                        direction = direction.normalized;
 
                         Look.At(direction);
 
-                        var distanceMultiplier = Mathf.Clamp(DistanceLeft / 1f, 0.4f, 1f);
+                        if(HandsIK.Targets.Count > 0)
+                        {
+                            velocity = rigidbody.velocity;
+                            velocity.y = 0f;
+                        }
 
-                        Velocity = Vector3.MoveTowards(Velocity, direction * speed * distanceMultiplier, acceleration * Time.deltaTime);
+                        var targetVelocity = direction * speed * Mathf.Clamp(DistanceLeft / 0.5f, 0.4f, 1f);
+
+                        velocity = Vector3.MoveTowards(velocity, targetVelocity, acceleration * Time.deltaTime);
+
+                        velocity.y = rigidbody.velocity.y;
+
+                        rigidbody.velocity = velocity;
                     }
                 }
                 else
@@ -151,6 +164,14 @@ namespace Game
                 yield return null;
 
             coroutine = null;
+        }
+
+        void SetFriction(float value, PhysicMaterialCombine combine)
+        {
+            collider.material.dynamicFriction = value;
+            collider.material.staticFriction = value;
+
+            collider.material.frictionCombine = combine;
         }
 
         void Update()
@@ -205,10 +226,10 @@ namespace Game
 
                 for (int i = 0; i < Path.corners.Length; i++)
                 {
-                    Gizmos.DrawSphere(Path.corners[i] + Vector3.up * 0.5f, 0.1f);
+                    Gizmos.DrawSphere(Path.corners[i] + Vector3.up * 0f, 0.1f);
 
                     if (i < Path.corners.Length - 1)
-                        Gizmos.DrawLine(Path.corners[i] + Vector3.up * 0.5f, Path.corners[i + 1] + Vector3.up * 0.5f);
+                        Gizmos.DrawLine(Path.corners[i] + Vector3.up * 0f, Path.corners[i + 1] + Vector3.up * 0f);
                 }
             }
         }

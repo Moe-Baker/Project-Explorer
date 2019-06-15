@@ -48,6 +48,8 @@ namespace Game
 
         public PlayerInteract Interact { get; protected set; }
 
+        public PlayerGroundCheck GroundCheck { get; protected set; }
+
         public PlayerMove Move { get; protected set; }
         public PlayerLook Look { get; protected set; }
 
@@ -71,6 +73,9 @@ namespace Game
 
             Interact = GetComponentInChildren<PlayerInteract>();
             Interact.Init(this);
+
+            GroundCheck = GetComponentInChildren<PlayerGroundCheck>();
+            GroundCheck.Init(this);
 
             Move = GetComponentInChildren<PlayerMove>();
             Move.Init(this);

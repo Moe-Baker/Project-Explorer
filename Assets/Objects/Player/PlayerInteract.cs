@@ -61,37 +61,43 @@ namespace Game
         public void Init(Player player)
         {
             this.player = player;
-
-            OnTargetChanged += (Interactable interactable) =>
-            {
-                if(interactable == null)
-                    Debug.Log("No Interaction");
-                else
-                    Debug.Log(interactable.Text);
-            };
         }
 
         void Update()
+        {
+            Detect();
+
+            Process();
+        }
+
+        void Detect()
         {
             ray = CameraRig.ScreenPointToRay(Input.mousePosition);
 
             if (Physics.Raycast(ray, out hit, range, mask, QueryTriggerInteraction.Ignore))
             {
                 var tempTarget = hit.transform.GetComponent<Interactable>();
-                
-                if(tempTarget != null)
-                {
-                    if (tempTarget.Active == false) tempTarget = null;
 
-                    if(tempTarget != null)
-                        if (player.DistanceTo(tempTarget.transform) > tempTarget.Range) tempTarget = null;
-                }
+                if (tempTarget != null && tempTarget.Active == false) tempTarget = null;
+
+                if (tempTarget != null && player.DistanceTo(tempTarget.transform) > tempTarget.Range) tempTarget = null;
 
                 Target = tempTarget;
             }
             else
             {
                 Target = null;
+            }
+        }
+
+        void Process()
+        {
+            if(Target != null)
+            {
+                if(Input.GetKeyDown(KeyCode.Mouse0))
+                {
+                    Target.Action();
+                }
             }
         }
     }

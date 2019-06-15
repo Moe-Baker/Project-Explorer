@@ -41,7 +41,7 @@ namespace Game
         {
             if(Input.GetMouseButton(0))
             {
-                if(Interact.HasHit)
+                if(Interact.HasHit && Interact.Target == null)
                 {
                     NavMeshHit navHit;
 

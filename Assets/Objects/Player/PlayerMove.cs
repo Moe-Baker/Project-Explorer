@@ -30,34 +30,6 @@ namespace Game
         public float Acceleration { get { return acceleration; } }
 
         Player player;
-
-        new public CapsuleCollider collider { get { return player.collider; } }
-        public float HeightOffset { get { return collider.height / 2f; } }
-
-        new public Rigidbody rigidbody { get { return player.rigidbody; } }
-
-        public PlayerGroundCheck GroundCheck { get { return player.GroundCheck; } }
-
-        public PlayerLook Look { get { return player.Look; } }
-
-        public PlayerHandsIK HandsIK { get { return player.HandsIK; } }
-
-        public Animator Animator { get { return player.Body.Animator; } }
-
-        #region Distance
-        public float TotalDistance { get; set; }
-
-        public float DistanceLeft { get; set; }
-
-        public float DistanceTraveled { get { return TotalDistance - DistanceLeft; } }
-
-        public float DistanceRate { get { return DistanceTraveled / TotalDistance; } }
-        #endregion
-
-        public Vector3 Destination { get; protected set; }
-
-        public NavMeshPath Path { get; protected set; }
-
         public void Init(Player reference)
         {
             this.player = reference;
@@ -68,6 +40,30 @@ namespace Game
 
             Path = new NavMeshPath();
         }
+
+        new public CapsuleCollider collider { get { return player.collider; } }
+        public float HeightOffset { get { return collider.height / 2f; } }
+
+        new public Rigidbody rigidbody { get { return player.rigidbody; } }
+        public PlayerGround Ground { get { return player.Ground; } }
+        public PlayerLook Look { get { return player.Look; } }
+        public PlayerHandsIK HandsIK { get { return player.HandsIK; } }
+        public Animator Animator { get { return player.Body.Animator; } }
+
+        #region Distance
+        public float TotalDistance { get; set; }
+
+        public float DistanceLeft { get; set; }
+        public float DistanceTraveled { get { return TotalDistance - DistanceLeft; } }
+
+        public float DistanceRate { get { return DistanceTraveled / TotalDistance; } }
+        #endregion
+
+        public Vector3 Destination { get; protected set; }
+
+        public NavMeshPath Path { get; protected set; }
+
+        public Vector3 Velocity { get; protected set; }
 
         public event Action<Vector3> OnMove;
         public void To(Vector3 target)
@@ -101,18 +97,25 @@ namespace Game
 
             var direction = Vector3.zero;
 
-            var velocity = rigidbody.velocity; velocity.y = 0f;
-
             while (true)
             {
                 if (NavMesh.CalculatePath(player.transform.position, Destination, NavMesh.AllAreas, Path))
                 {
                     DistanceLeft = CalculateDistance(Path);
 
-                    if (rigidbody.velocity.magnitude * Time.deltaTime >= DistanceLeft)
+                    if (Velocity.magnitude * Time.deltaTime < DistanceLeft)
                     {
-                        SetFriction(1, PhysicMaterialCombine.Maximum);
+                        direction = (Path.corners[1] - player.transform.position); direction.y = 0f;
+                        direction = direction.normalized;
 
+                        Look.At(direction);
+
+                        var targetVelocity = direction * speed * Mathf.Clamp(DistanceLeft / 0.5f, 0.4f, 1f);
+
+                        Velocity = Vector3.MoveTowards(Velocity, targetVelocity, acceleration * Time.deltaTime);
+                    }
+                    else
+                    {
                         DistanceLeft = 0f;
 
                         var position = player.transform.position;
@@ -122,32 +125,9 @@ namespace Game
                         }
                         player.transform.position = position;
 
-                        rigidbody.velocity -= velocity;
+                        Velocity = Vector3.zero;
 
                         break;
-                    }
-                    else
-                    {
-                        SetFriction(0, PhysicMaterialCombine.Minimum);
-
-                        direction = (Path.corners[1] - player.transform.position); direction.y = 0f;
-                        direction = direction.normalized;
-
-                        Look.At(direction);
-
-                        if(HandsIK.Targets.Count > 0)
-                        {
-                            velocity = rigidbody.velocity;
-                            velocity.y = 0f;
-                        }
-
-                        var targetVelocity = direction * speed * Mathf.Clamp(DistanceLeft / 0.5f, 0.4f, 1f);
-
-                        velocity = Vector3.MoveTowards(velocity, targetVelocity, acceleration * Time.deltaTime);
-
-                        velocity.y = rigidbody.velocity.y;
-
-                        rigidbody.velocity = velocity;
                     }
                 }
                 else
@@ -166,17 +146,14 @@ namespace Game
             coroutine = null;
         }
 
-        void SetFriction(float value, PhysicMaterialCombine combine)
-        {
-            collider.material.dynamicFriction = value;
-            collider.material.staticFriction = value;
-
-            collider.material.frictionCombine = combine;
-        }
-
         void Update()
         {
-            Animator.SetFloat("Speed", rigidbody.velocity.magnitude * Mathf.Clamp01(DistanceLeft / 0.25f));
+            Animator.SetFloat("Speed", Velocity.magnitude * Mathf.Clamp01(DistanceLeft / 0.25f));
+        }
+
+        void FixedUpdate()
+        {
+            rigidbody.MovePosition(rigidbody.position + Ground.ProjectOnPlane(Velocity) * Time.fixedDeltaTime);
         }
 
         protected float CalculateDistance(NavMeshPath path)

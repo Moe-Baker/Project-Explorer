@@ -48,9 +48,13 @@ namespace Game
 
         public PlayerInteract Interact { get; protected set; }
 
-        public PlayerGroundCheck GroundCheck { get; protected set; }
+        public PlayerGround Ground { get; protected set; }
+
+        public PlayerGravity Gravity { get; protected set; }
 
         public PlayerMove Move { get; protected set; }
+        public Vector3 Velocity { get { return Move.Velocity; } }
+
         public PlayerLook Look { get; protected set; }
 
         public PlayerNavigator Navigator { get; protected set; }
@@ -74,8 +78,11 @@ namespace Game
             Interact = GetComponentInChildren<PlayerInteract>();
             Interact.Init(this);
 
-            GroundCheck = GetComponentInChildren<PlayerGroundCheck>();
-            GroundCheck.Init(this);
+            Ground = GetComponentInChildren<PlayerGround>();
+            Ground.Init(this);
+
+            Gravity = GetComponentInChildren<PlayerGravity>();
+            Gravity.Init(this);
 
             Move = GetComponentInChildren<PlayerMove>();
             Move.Init(this);
@@ -94,5 +101,13 @@ namespace Game
         {
             return Vector3.Distance(transform.position, target.position);
         }
-	}
+
+        void SetFriction(float value, PhysicMaterialCombine combine)
+        {
+            collider.material.dynamicFriction = value;
+            collider.material.staticFriction = value;
+
+            collider.material.frictionCombine = combine;
+        }
+    }
 }

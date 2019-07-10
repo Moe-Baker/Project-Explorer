@@ -19,7 +19,7 @@ using Random = UnityEngine.Random;
 
 namespace Game
 {
-	public class PlayerGroundCheck : MonoBehaviour
+	public class PlayerGround : MonoBehaviour
 	{
         [SerializeField]
         protected LayerMask mask = Physics.DefaultRaycastLayers;
@@ -29,17 +29,6 @@ namespace Game
         public RaycastHit Hit { get { return hit; } }
 
         public bool HasHit { get { return hit.collider != null; } }
-
-        public Vector3 Normal
-        {
-            get
-            {
-                if (HasHit)
-                    return hit.normal;
-                else
-                    return Vector3.up;
-            }
-        }
 
         public float Angle { get; protected set; }
 
@@ -52,7 +41,7 @@ namespace Game
             this.player = reference;
         }
 
-        void Update()
+        protected virtual void Update()
         {
             if (Physics.Raycast(player.transform.position, Vector3.down, out hit, Mathf.Infinity, mask, QueryTriggerInteraction.Ignore))
             {
@@ -62,6 +51,21 @@ namespace Game
             {
                 Angle = 0f;
             }
+        }
+
+        public virtual Vector3 Project(Vector3 vector)
+        {
+            if (HasHit)
+                vector = Vector3.Project(vector, hit.normal);
+
+            return vector;
+        }
+        public virtual Vector3 ProjectOnPlane(Vector3 vector)
+        {
+            if (HasHit)
+                vector = Vector3.ProjectOnPlane(vector, hit.normal);
+
+            return vector;
         }
 	}
 }
